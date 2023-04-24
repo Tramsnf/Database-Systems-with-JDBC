@@ -10,54 +10,30 @@ public class App2Test {
         this.conn = conn;
     }
 
-    // Test Case 17
-    public void testCase17() {
-        System.out.println("Test Case 17: Your test description");
+    // Test Case 1
+    public void testCase1() {
+        System.out.println("Test Case 1: Your test description");
 
         try {
             // Your test implementation
             String query = "select * from doctors";
             executeQueryAndPrintResults(query);
         } catch (Exception e) {
+            System.out.println("Error executing complex query: " + e.getMessage());
             e.printStackTrace();
         }
     }
 
-    // Test Case 18
-    public void testCase18() {
-        System.out.println("Test Case 18: Your test description");
+    // Test Case 2
+    public void testCase2() {
+        System.out.println("Test Case 2: Your test description");
 
         try {
             // Your test implementation
-            String query = "Your SQL query for Test Case 18";
+            String query = "Your SQL query for Test Case 2";
             executeQueryAndPrintResults(query);
         } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    // Test Case 19
-    public void testCase19() {
-        System.out.println("Test Case 19: Your test description");
-
-        try {
-            // Your test implementation
-            String query = "Your SQL query for Test Case 19";
-            executeQueryAndPrintResults(query);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    // Test Case 20
-    public void testCase20() {
-        System.out.println("Test Case 20: Your test description");
-
-        try {
-            // Your test implementation
-            String query = "Your SQL query for Test Case 20";
-            executeQueryAndPrintResults(query);
-        } catch (Exception e) {
+            System.out.println("Error executing complex query: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -90,9 +66,7 @@ public class App2Test {
     }
 
     public void runAllTests() {
-        testCase17();
-        testCase18();
-        testCase19();
-        testCase20();
+        testCase1();
+        testCase2();
     }
 }
