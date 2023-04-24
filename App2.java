@@ -34,6 +34,7 @@ public class App2 {
 
             int option = 9;
             try {
+                System.out.println("Enter your option:");
                 option = Integer.parseInt(reader.readLine());
             } catch (Exception e) {
                 option = 9;

@@ -16,7 +16,7 @@ public class App2Test {
 
         try {
             // Your test implementation
-            String query = "Your SQL query for Test Case 17";
+            String query = "select * from doctors";
             executeQueryAndPrintResults(query);
         } catch (Exception e) {
             e.printStackTrace();
