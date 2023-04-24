@@ -12,6 +12,9 @@ public class App2Test {
 
     // Test Case 1
     public void testCase1() {
+        System.out.println();
+        System.out.println();
+        System.out.println();
         System.out.println("Test Case 1: Your test description");
 
         try {
@@ -20,12 +23,15 @@ public class App2Test {
             executeQueryAndPrintResults(query);
         } catch (Exception e) {
             System.out.println("Error executing complex query: " + e.getMessage());
-            e.printStackTrace();
+            //e.printStackTrace();
         }
     }
 
     // Test Case 2
     public void testCase2() {
+        System.out.println();
+        System.out.println();
+        System.out.println();
         System.out.println("Test Case 2: Your test description");
 
         try {
@@ -34,7 +40,7 @@ public class App2Test {
             executeQueryAndPrintResults(query);
         } catch (Exception e) {
             System.out.println("Error executing complex query: " + e.getMessage());
-            e.printStackTrace();
+            //e.printStackTrace();
         }
     }
 

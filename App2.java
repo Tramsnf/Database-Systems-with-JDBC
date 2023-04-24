@@ -8,6 +8,18 @@ import java.sql.DatabaseMetaData;
 import java.sql.ResultSetMetaData;
 
 public class App2 {
+    private static Connection establishConnection() {
+        Connection conn = null;
+        try {
+            Class.forName("oracle.jdbc.driver.OracleDriver");
+            conn = DriverManager.getConnection("jdbc:oracle:thin:@oracle2.wiu.edu:1521/orclpdb1", "ORA_SOI104",
+                    "CS470_8129");
+        } catch (Exception e) {
+            System.out.println("Connection Failed");
+        }
+        return conn;
+    }
+
     static BufferedReader reader;
     static Connection conn = null;
 
@@ -19,18 +31,51 @@ public class App2 {
             System.out.println("Failed to connect to the database. Exiting.");
             return;
         }
-        
-        // Create an instance of the App2Test class and call the runAllTests method
-        App2Test test = new App2Test(conn);
-        test.runAllTests();
 
+        boolean runTest = false;
+        int option = 0;
+
+        while (option != 1 && option != 2) {
+            System.out.println("Choose an option:");
+            System.out.println("1: Run the program");
+            System.out.println("2: Run the test case");
+            System.out.println();
+
+            try {
+                System.out.println("Enter your option:");
+                option = Integer.parseInt(reader.readLine());
+            } catch (Exception e) {
+                option = 0;
+            }
+
+            if (option == 1) {
+                runProgram();
+            } else if (option == 2) {
+                runTest = true;
+            } else {
+                System.out.println("Invalid option. Please try again.");
+            }
+        }
+
+        if (runTest) {
+            // Create an instance of the App2Test class and call the runAllTests method
+            App2Test test = new App2Test(conn);
+            test.runAllTests();
+        }
+    }
+
+    private static void runProgram() {
         boolean flag = true;
         while (flag) {
+            System.out.println();
+            System.out.println();
             System.out.println("Choose an option:");
             System.out.println("1: Insert data into table");
             System.out.println("2: Update data in table");
             System.out.println("3: Perform a complex query");
             System.out.println("0: Exit");
+            System.out.println();
+            System.out.println();
 
             int option = 9;
             try {
@@ -59,19 +104,7 @@ public class App2 {
             }
         }
     }
-
-    private static Connection establishConnection() {
-        Connection conn = null;
-        try {
-            Class.forName("oracle.jdbc.driver.OracleDriver");
-            conn = DriverManager.getConnection("jdbc:oracle:thin:@oracle2.wiu.edu:1521/orclpdb1", "ORA_SOI104",
-                    "CS470_8129");
-        } catch (Exception e) {
-            System.out.println("Connection Failed");
-        }
-        return conn;
-    }
-
+    
     private static void listTables() {
         try {
             DatabaseMetaData metaData = conn.getMetaData();
