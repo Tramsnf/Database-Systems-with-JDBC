@@ -12,6 +12,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Handler;
 
 public class App {
     private static Connection establishConnection(String dbType) {
@@ -74,29 +80,64 @@ public class App {
         try {
             FileHandler fileHandler = new FileHandler("App.log", true);
             fileHandler.setFormatter(new SimpleFormatter());
+
+            ConsoleHandler consoleHandler = new ConsoleHandler();
+            consoleHandler.setFormatter(new SimpleFormatter());
+
             logger.addHandler(fileHandler);
+            logger.addHandler(consoleHandler);
             logger.setLevel(Level.ALL);
+
+            // Remove the default console handler from the parent logger
+            Logger rootLogger = Logger.getLogger("");
+            Handler[] handlers = rootLogger.getHandlers();
+            for (Handler handler : handlers) {
+                if (handler instanceof ConsoleHandler) {
+                    rootLogger.removeHandler(handler);
+                }
+            }
         } catch (Exception e) {
             System.err.println("Error setting up logger: " + e.getMessage());
+        }
+    }
+    
+    private static List<String> countNamedVariables(String query) {
+        Pattern pattern = Pattern.compile(":(\\w+)");
+        Matcher matcher = pattern.matcher(query);
+        List<String> namedVariables = new ArrayList<>();
+
+        while (matcher.find()) {
+            namedVariables.add(matcher.group(1));
+        }
+
+        return namedVariables;
+    }
+    
+    private static void bindNamedVariable(PreparedStatement stmt, List<String> namedVariables)
+            throws SQLException, IOException {
+        for (int i = 0; i < namedVariables.size(); i++) {
+            System.out.println("Enter value for bind variable " + namedVariables.get(i) + ":");
+            String value = reader.readLine();
+            stmt.setObject(i + 1, value);
         }
     }
 
     public static void main(String[] args) {
         reader = new BufferedReader(new InputStreamReader(System.in));
-
+        
         // Prompt the user to enter the database type they want to connect to
-        System.out.println("Enter the database type (oracle, mysql, postgresql):");
+        logger.log(Level.INFO,"Enter the database type (oracle, mysql, postgresql):");
         String dbType = "";
         try {
             dbType = reader.readLine();
         } catch (IOException e) {
-            System.err.println("Error reading database type: " + e.getMessage());
+            logger.log(Level.SEVERE,"Error reading database type: " + e.getMessage());
         }
 
         conn = establishConnection(dbType);
 
         if (conn == null) {
-            System.out.println("Failed to connect to the database. Exiting.");
+            logger.log(Level.SEVERE,"Failed to connect to the database. Exiting.");
             return;
         }
 
@@ -105,7 +146,7 @@ public class App {
 
         while (option != 1 && option != 2) {
             System.out.println();
-            System.out.println("Choose an option:");
+            logger.log(Level.INFO,"Choose an option:");
             System.out.println("1: Run the program");
             System.out.println("2: Run the test case");
             System.out.println();
@@ -122,12 +163,12 @@ public class App {
             } else if (option == 2) {
                 runTest = true;
             } else {
-                System.out.println("Invalid option. Please try again.");
+                logger.log(Level.INFO,"Invalid option. Please try again.");
             }
         }
 
         if (runTest) {
-            // Create an instance of the App2Test class and call the runAllTests method
+            // Create an instance of the AppTestCase class and call the runAllTests method
             AppTestCase test = new AppTestCase(conn);
             test.runAllTests();
         }
@@ -135,7 +176,7 @@ public class App {
         try {
             conn.close();
         } catch (SQLException e) {
-            System.out.println("Error closing the connection: " + e.getMessage());
+            logger.log(Level.SEVERE,"Error closing the connection: " + e.getMessage());
         }
     }
 
@@ -189,7 +230,7 @@ public class App {
             DatabaseMetaData metaData = conn.getMetaData();
             String[] types = { "TABLE" };
             try (ResultSet resultSet = metaData.getTables(null, null, "%", types)) {
-                System.out.println("List of available tables:");
+                logger.log(Level.INFO,"List of available tables:");
                 int columnCount = 5;
                 int currentColumn = 0;
                 while (resultSet.next()) {
@@ -208,7 +249,7 @@ public class App {
                 }
             }
         } catch (SQLException e) {
-            System.out.println("Error listing tables: " + e.getMessage());
+            logger.log(Level.SEVERE,"Error listing tables: " + e.getMessage());
         }
     }
 
@@ -216,9 +257,9 @@ public class App {
         try {
             System.out.println("Enter table name:");
             String tableName = reader.readLine();
-            System.out.println("Enter column names separated by commas (e.g. column1,column2):");
+            logger.log(Level.INFO,"Enter column names separated by commas (e.g. column1,column2):");
             String columns = reader.readLine();
-            System.out.println("Enter the corresponding values separated by commas (e.g. value1,value2):");
+            logger.log(Level.INFO,"Enter the corresponding values separated by commas (e.g. value1,value2):");
             String values = reader.readLine();
 
             String[] columnArray = columns.split(",");
@@ -250,19 +291,19 @@ public class App {
                 System.out.println(rowsAffected + " row(s) inserted.");
             }
         } catch (Exception e) {
-            System.out.println("Error inserting data: " + e.getMessage());
+            logger.log(Level.SEVERE,"Error inserting data: " + e.getMessage());
         }
     }
 
     private static void updateData() {
         try {
-            System.out.println("Enter table name:");
+            logger.log(Level.INFO,"Enter table name:");
             String tableName = reader.readLine();
-            System.out.println("Enter the column name to update:");
+            logger.log(Level.INFO,"Enter the column name to update:");
             String columnName = reader.readLine();
-            System.out.println("Enter the new value for the column:");
+            logger.log(Level.INFO,"Enter the new value for the column:");
             String newValue = reader.readLine();
-            System.out.println("Enter the WHERE condition (e.g. column1 = value1 AND column2 = value2):");
+            logger.log(Level.INFO,"Enter the WHERE condition (e.g. column1 = value1 AND column2 = value2):");
             String condition = reader.readLine();
 
             String query = "UPDATE " + tableName + " SET " + columnName + " = ? WHERE " + condition;
@@ -273,18 +314,20 @@ public class App {
                 System.out.println(rowsAffected + " row(s) updated.");
             }
         } catch (Exception e) {
-            System.out.println("Error updating data: " + e.getMessage());
+            logger.log(Level.SEVERE,"Error updating data: " + e.getMessage());
         }
     }
 
     private static void complexQuery() {
         try {
-            System.out.println("Enter your complex query:");
+            logger.log(Level.INFO,"Enter your complex query:");
             String query = reader.readLine();
             query = query.trim();
             if (query.endsWith(";")) {
                 query = query.substring(0, query.length() - 1);
             }
+            
+            List<String> namedVariables = countNamedVariables(query);
 
             // Get the first word of the query (the SQL command)
             String command = query.split("\\s+")[0].toLowerCase();
@@ -295,6 +338,7 @@ public class App {
             boolean isAlter = command.equals("alter");
 
             try (PreparedStatement stmt = conn.prepareStatement(query)) {
+                bindNamedVariable(stmt, namedVariables); // Move this line here
                 if (isSelect) {
                     // Handle SELECT queries
                     try (ResultSet resultSet = stmt.executeQuery()) {
@@ -336,7 +380,7 @@ public class App {
                 }
             }
         } catch (Exception e) {
-            System.out.println("Error executing complex query: " + e.getMessage());
+            logger.log(Level.SEVERE,"Error executing complex query: " + e.getMessage());
             e.printStackTrace();
         }
     }
