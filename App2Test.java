@@ -19,7 +19,7 @@ public class App2Test {
 
         try {
             // Your test implementation
-            String query = "select * from doctors";
+            String query = "SELECT doc_id, doc_name FROM doctors where doc_id = 2";
             executeQueryAndPrintResults(query);
         } catch (Exception e) {
             System.out.println("Error executing complex query: " + e.getMessage());

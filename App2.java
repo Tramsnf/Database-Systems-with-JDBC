@@ -70,9 +70,10 @@ public class App2 {
             System.out.println();
             System.out.println();
             System.out.println("Choose an option:");
-            System.out.println("1: Insert data into table");
-            System.out.println("2: Update data in table");
-            System.out.println("3: Perform a complex query");
+            System.out.println("1: List tables");
+            System.out.println("2: Insert data into table");
+            System.out.println("3: Update data in table");
+            System.out.println("4: Perform a complex query");
             System.out.println("0: Exit");
             System.out.println();
             System.out.println();
@@ -87,12 +88,15 @@ public class App2 {
 
             switch (option) {
                 case 1:
-                    insertData();
+                    listTables(); 
                     break;
                 case 2:
-                    updateData();
+                    insertData();
                     break;
                 case 3:
+                    updateData();
+                    break;
+                case 4:
                     complexQuery();
                     break;
                 case 0:
@@ -104,7 +108,7 @@ public class App2 {
             }
         }
     }
-    
+
     private static void listTables() {
         try {
             DatabaseMetaData metaData = conn.getMetaData();
@@ -154,7 +158,7 @@ public class App2 {
 
             PreparedStatement stmt = conn.prepareStatement(queryBuilder.toString());
             for (int i = 0; i < valueArray.length; i++) {
-                stmt.setString(i                 + 1, valueArray[i]);
+                stmt.setString(i + 1, valueArray[i]);
             }
 
             int rowsAffected = stmt.executeUpdate();
@@ -187,42 +191,41 @@ public class App2 {
     }
 
     private static void complexQuery() {
-    try {
-        System.out.println("Enter your complex query:");
-        String query = reader.readLine();
-        query = query.trim();
-        if (query.endsWith(";")) {
-            query = query.substring(0, query.length() - 1);
-        }
-
-        PreparedStatement stmt = conn.prepareStatement(query);
-        ResultSet resultSet = stmt.executeQuery();
-        ResultSetMetaData metaData = resultSet.getMetaData();
-        int columnCount = metaData.getColumnCount();
-
-        // Print column names
-        for (int i = 1; i <= columnCount; i++) {
-            System.out.print(metaData.getColumnName(i));
-            if (i < columnCount) {
-                System.out.print("\t");
+        try {
+            System.out.println("Enter your complex query:");
+            String query = reader.readLine();
+            query = query.trim();
+            if (query.endsWith(";")) {
+                query = query.substring(0, query.length() - 1);
             }
-        }
-        System.out.println();
 
-        // Print column values
-        while (resultSet.next()) {
+            PreparedStatement stmt = conn.prepareStatement(query);
+            ResultSet resultSet = stmt.executeQuery();
+            ResultSetMetaData metaData = resultSet.getMetaData();
+            int columnCount = metaData.getColumnCount();
+
+            // Print column names
             for (int i = 1; i <= columnCount; i++) {
-                System.out.print(resultSet.getString(i));
+                System.out.print(metaData.getColumnName(i));
                 if (i < columnCount) {
                     System.out.print("\t");
                 }
             }
             System.out.println();
+
+            // Print column values
+            while (resultSet.next()) {
+                for (int i = 1; i <= columnCount; i++) {
+                    System.out.print(resultSet.getString(i));
+                    if (i < columnCount) {
+                        System.out.print("\t");
+                    }
+                }
+                System.out.println();
+            }
+        } catch (Exception e) {
+            System.out.println("Error executing complex query: " + e.getMessage());
+            
         }
-    } catch (Exception e) {
-        System.out.println("Error executing complex query: " + e.getMessage());
-        e.printStackTrace();
     }
 }
-}
-
