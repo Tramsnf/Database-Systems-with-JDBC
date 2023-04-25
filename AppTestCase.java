@@ -18,7 +18,7 @@ public class AppTestCase {
 
         try {
             // Your test implementation
-            String query = "SELECT j.name, COUNT(j.name) AS name_count, j.time, j.price, COUNT(DISTINCT j.ip) AS ip_count, SUM(j.price) AS price_sum FROM joy j JOIN friends f ON j.name = f.name WHERE j.time >= TO_TIMESTAMP(:yesterday, 'YYYY-MM-DD HH24:MI:SS') AND j.time < TO_TIMESTAMP(:today, 'YYYY-MM-DD HH24:MI:SS') GROUP BY j.name, j.time, j.price";
+            String query = "select * from smart";
             executeQueryAndPrintResults(query);
         } catch (Exception e) {
             System.out.println("Error executing complex query: " + e.getMessage());

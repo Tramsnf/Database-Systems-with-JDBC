@@ -31,8 +31,8 @@ public class App {
                 try {
                     Class.forName("oracle.jdbc.driver.OracleDriver");
                     url = "jdbc:oracle:thin:@oracle2.wiu.edu:1521/orclpdb1";
-                    username = "";
-                    password = "";
+                    username = "username";
+                    password = "password";
                 } catch (ClassNotFoundException e) {
                     logger.log(Level.SEVERE, "Oracle driver not found");
                 }
