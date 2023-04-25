@@ -12,7 +12,9 @@ public class AppTestCase {
 
     // Test Case 1
     public void testCase1() {
+        System.out.println();
         System.out.println("Test Case 1: Your test description");
+        System.out.println();
 
         try {
             // Your test implementation
@@ -25,14 +27,18 @@ public class AppTestCase {
 
     // Test Case 2
     public void testCase2() {
+        System.out.println();
         System.out.println("Test Case 2: Your test description");
+        System.out.println();
 
         try {
             // Your test implementation
             String query = "select * from doctors";
             executeQueryAndPrintResults(query);
         } catch (Exception e) {
+            System.out.println();
             System.out.println("Error executing complex query: " + e.getMessage());
+            System.out.println();
         }
     }
 
