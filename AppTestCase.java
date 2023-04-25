@@ -3,10 +3,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 
-public class App2Test {
+public class AppTestCase {
     private Connection conn;
 
-    public App2Test(Connection conn) {
+    public AppTestCase(Connection conn) {
         this.conn = conn;
     }
 

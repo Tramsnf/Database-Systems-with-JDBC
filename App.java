@@ -7,7 +7,7 @@ import java.io.InputStreamReader;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSetMetaData;
 
-public class App2 {
+public class App {
     private static Connection establishConnection() {
         Connection conn = null;
         try {
@@ -59,7 +59,7 @@ public class App2 {
 
         if (runTest) {
             // Create an instance of the App2Test class and call the runAllTests method
-            App2Test test = new App2Test(conn);
+            AppTestCase test = new AppTestCase(conn);
             test.runAllTests();
         }
     }
