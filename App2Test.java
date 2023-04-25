@@ -19,7 +19,7 @@ public class App2Test {
 
         try {
             // Your test implementation
-            String query = "UPDATE doctors SET doc_name = 'New Name' WHERE doc_id = 2";
+            String query = "CREATE TABLE friends ( id INT PRIMARY KEY, name VARCHAR(255), relationship VARCHAR(255), meeting_date DATE ); INSERT INTO friends (id, name, relationship, meeting_date) VALUES (1, 'Alice', 'colleague', '2021-05-10'), (2, 'Bob', 'neighbor', '2018-08-20'), (3, 'Charlie', 'classmate', '2017-09-15'), (4, 'Diana', 'friend', '2019-11-05'), (5, 'Eva', 'cousin', '2021-03-12')";
             executeQueryAndPrintResults(query);
         } catch (Exception e) {
             System.out.println("Error executing complex query: " + e.getMessage());
@@ -36,7 +36,7 @@ public class App2Test {
 
         try {
             // Your test implementation
-            String query = "Your SQL query for Test Case 2";
+            String query = "INSERT INTO joy (id, age, name) VALUES (6, 32, 'Felix'), (7, 25, 'Grace'), (8, 45, 'Hannah'), (9, 37, 'Ivan'), (10, 29, 'Jack')";
             executeQueryAndPrintResults(query);
         } catch (Exception e) {
             System.out.println("Error executing complex query: " + e.getMessage());
@@ -46,7 +46,22 @@ public class App2Test {
 
     private void executeQueryAndPrintResults(String query) throws Exception {
         PreparedStatement stmt = conn.prepareStatement(query);
-        ResultSet resultSet = stmt.executeQuery();
+
+        if (isSelectQuery(query)) {
+            ResultSet resultSet = stmt.executeQuery();
+            printSelectResults(resultSet);
+        } else {
+            int rowsAffected = stmt.executeUpdate();
+            System.out.println(rowsAffected + " row(s) affected.");
+        }
+    }
+
+    private boolean isSelectQuery(String query) {
+        String command = query.trim().split("\\s+")[0].toLowerCase();
+        return command.equals("select");
+    }
+
+    private void printSelectResults(ResultSet resultSet) throws Exception {
         ResultSetMetaData metaData = resultSet.getMetaData();
         int columnCount = metaData.getColumnCount();
 

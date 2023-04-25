@@ -88,7 +88,7 @@ public class App2 {
 
             switch (option) {
                 case 1:
-                    listTables(); 
+                    listTables();
                     break;
                 case 2:
                     insertData();
@@ -199,10 +199,17 @@ public class App2 {
                 query = query.substring(0, query.length() - 1);
             }
 
+            // Get the first word of the query (the SQL command)
+            String command = query.split("\\s+")[0].toLowerCase();
+
+            // Check if the command is a SELECT or INSERT statement
+            boolean isSelect = command.equals("select");
+            boolean isInsert = command.equals("insert");
+
             PreparedStatement stmt = conn.prepareStatement(query);
 
-            // Check if the query is a SELECT statement
-            if (query.toUpperCase().startsWith("SELECT")) {
+            if (isSelect) {
+                // Handle SELECT queries
                 ResultSet resultSet = stmt.executeQuery();
                 ResultSetMetaData metaData = resultSet.getMetaData();
                 int columnCount = metaData.getColumnCount();
@@ -226,11 +233,14 @@ public class App2 {
                     }
                     System.out.println();
                 }
-            } else if (query.toUpperCase().startsWith("INSERT") || query.toUpperCase().startsWith("UPDATE")) {
+            } else if (isInsert) {
+                // Handle INSERT queries
+                int rowsAffected = stmt.executeUpdate();
+                System.out.println(rowsAffected + " row(s) inserted.");
+            } else {
+                // Handle other SQL queries (UPDATE, DELETE, etc.)
                 int rowsAffected = stmt.executeUpdate();
                 System.out.println(rowsAffected + " row(s) affected.");
-            } else {
-                System.out.println("Invalid query. Please enter a valid SELECT, INSERT, or UPDATE statement.");
             }
         } catch (Exception e) {
             System.out.println("Error executing complex query: " + e.getMessage());
