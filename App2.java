@@ -200,32 +200,40 @@ public class App2 {
             }
 
             PreparedStatement stmt = conn.prepareStatement(query);
-            ResultSet resultSet = stmt.executeQuery();
-            ResultSetMetaData metaData = resultSet.getMetaData();
-            int columnCount = metaData.getColumnCount();
 
-            // Print column names
-            for (int i = 1; i <= columnCount; i++) {
-                System.out.print(metaData.getColumnName(i));
-                if (i < columnCount) {
-                    System.out.print("\t");
-                }
-            }
-            System.out.println();
+            // Check if the query is a SELECT statement
+            if (query.toUpperCase().startsWith("SELECT")) {
+                ResultSet resultSet = stmt.executeQuery();
+                ResultSetMetaData metaData = resultSet.getMetaData();
+                int columnCount = metaData.getColumnCount();
 
-            // Print column values
-            while (resultSet.next()) {
+                // Print column names
                 for (int i = 1; i <= columnCount; i++) {
-                    System.out.print(resultSet.getString(i));
+                    System.out.print(metaData.getColumnName(i));
                     if (i < columnCount) {
                         System.out.print("\t");
                     }
                 }
                 System.out.println();
+
+                // Print column values
+                while (resultSet.next()) {
+                    for (int i = 1; i <= columnCount; i++) {
+                        System.out.print(resultSet.getString(i));
+                        if (i < columnCount) {
+                            System.out.print("\t");
+                        }
+                    }
+                    System.out.println();
+                }
+            } else if (query.toUpperCase().startsWith("INSERT") || query.toUpperCase().startsWith("UPDATE")) {
+                int rowsAffected = stmt.executeUpdate();
+                System.out.println(rowsAffected + " row(s) affected.");
+            } else {
+                System.out.println("Invalid query. Please enter a valid SELECT, INSERT, or UPDATE statement.");
             }
         } catch (Exception e) {
             System.out.println("Error executing complex query: " + e.getMessage());
-            
         }
     }
 }
