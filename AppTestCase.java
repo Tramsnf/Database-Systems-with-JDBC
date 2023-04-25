@@ -18,10 +18,11 @@ public class AppTestCase {
 
         try {
             // Your test implementation
-            String query = "select * from hospitals";
+            String query = "ALTER TABLE joy ADD (time TIMESTAMP, price DECIMAL(10, 2), ip VARCHAR(15))";
             executeQueryAndPrintResults(query);
         } catch (Exception e) {
             System.out.println("Error executing complex query: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -33,11 +34,12 @@ public class AppTestCase {
 
         try {
             // Your test implementation
-            String query = "select * from doctors";
+            String query = "ALTER TABLE friends ADD (time TIMESTAMP)";
             executeQueryAndPrintResults(query);
         } catch (Exception e) {
             System.out.println();
             System.out.println("Error executing complex query: " + e.getMessage());
+            e.printStackTrace();
             System.out.println();
         }
     }

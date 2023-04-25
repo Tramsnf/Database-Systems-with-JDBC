@@ -11,17 +11,57 @@ import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
+import java.io.IOException;
 
 public class App {
-    private static Connection establishConnection() {
+    private static Connection establishConnection(String dbType) {
         Connection conn = null;
+        String url = "";
+        String username = "";
+        String password = "";
+
+        switch (dbType.toLowerCase()) {
+            case "oracle":
+                try {
+                    Class.forName("oracle.jdbc.driver.OracleDriver");
+                    url = "jdbc:oracle:thin:@oracle2.wiu.edu:1521/orclpdb1";
+                    username = "";
+                    password = "C0_9";
+                } catch (ClassNotFoundException e) {
+                    logger.log(Level.SEVERE, "Oracle driver not found");
+                }
+                break;
+            case "mysql":
+                try {
+                    Class.forName("com.mysql.cj.jdbc.Driver");
+                    url = "jdbc:mysql://localhost:3306/your_database";
+                    username = "your_username";
+                    password = "your_password";
+                } catch (ClassNotFoundException e) {
+                    logger.log(Level.SEVERE, "MySQL driver not found");
+                }
+                break;
+            case "postgresql":
+                try {
+                    Class.forName("org.postgresql.Driver");
+                    url = "jdbc:postgresql://localhost:5432/your_database";
+                    username = "your_username";
+                    password = "your_password";
+                } catch (ClassNotFoundException e) {
+                    logger.log(Level.SEVERE, "PostgreSQL driver not found");
+                }
+                break;
+            default:
+                logger.log(Level.SEVERE, "Unsupported database type");
+                return null;
+        }
+
         try {
-            Class.forName("oracle.jdbc.driver.OracleDriver");
-            conn = DriverManager.getConnection("jdbc:oracle:thin:@oracle2.wiu.edu:1521/orclpdb1", "ORA_S5545OI104",
-                    "");
-        } catch (Exception e) {
+            conn = DriverManager.getConnection(url, username, password);
+        } catch (SQLException e) {
             logger.log(Level.SEVERE, "Connection Failed");
         }
+
         return conn;
     }
 
@@ -43,7 +83,17 @@ public class App {
 
     public static void main(String[] args) {
         reader = new BufferedReader(new InputStreamReader(System.in));
-        conn = establishConnection();
+
+        // Prompt the user to enter the database type they want to connect to
+        System.out.println("Enter the database type (oracle, mysql, postgresql):");
+        String dbType = "";
+        try {
+            dbType = reader.readLine();
+        } catch (IOException e) {
+            System.err.println("Error reading database type: " + e.getMessage());
+        }
+
+        conn = establishConnection(dbType);
 
         if (conn == null) {
             System.out.println("Failed to connect to the database. Exiting.");
@@ -243,6 +293,7 @@ public class App {
             // Check if the command is a SELECT or INSERT statement
             boolean isSelect = command.equals("select");
             boolean isInsert = command.equals("insert");
+            boolean isAlter = command.equals("alter");
 
             try (PreparedStatement stmt = conn.prepareStatement(query)) {
                 if (isSelect) {
@@ -275,6 +326,10 @@ public class App {
                     // Handle INSERT queries
                     int rowsAffected = stmt.executeUpdate();
                     System.out.println(rowsAffected + " row(s) inserted.");
+                } else if (isAlter) {
+                    // Handle ALTER queries
+                    stmt.executeUpdate();
+                    System.out.println("Table altered.");
                 } else {
                     // Handle other SQL queries (UPDATE, DELETE, etc.)
                     int rowsAffected = stmt.executeUpdate();
@@ -283,6 +338,7 @@ public class App {
             }
         } catch (Exception e) {
             System.out.println("Error executing complex query: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 }
