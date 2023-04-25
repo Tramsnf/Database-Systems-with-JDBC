@@ -1,11 +1,12 @@
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.sql.DatabaseMetaData;
 import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 
 public class App {
     private static Connection establishConnection() {
@@ -62,6 +63,12 @@ public class App {
             AppTestCase test = new AppTestCase(conn);
             test.runAllTests();
         }
+
+        try {
+            conn.close();
+        } catch (SQLException e) {
+            System.out.println("Error closing the connection: " + e.getMessage());
+        }
     }
 
     private static void runProgram() {
@@ -113,14 +120,14 @@ public class App {
         try {
             DatabaseMetaData metaData = conn.getMetaData();
             String[] types = { "TABLE" };
-            ResultSet resultSet = metaData.getTables(null, null, "%", types);
-
-            System.out.println("List of available tables:");
-            while (resultSet.next()) {
-                String tableName = resultSet.getString("TABLE_NAME");
-                System.out.println(tableName);
+            try (ResultSet resultSet = metaData.getTables(null, null, "%", types)) {
+                System.out.println("List of available tables:");
+                while (resultSet.next()) {
+                    String tableName = resultSet.getString("TABLE_NAME");
+                    System.out.println(tableName);
+                }
             }
-        } catch (Exception e) {
+        } catch (SQLException e) {
             System.out.println("Error listing tables: " + e.getMessage());
         }
     }
@@ -156,13 +163,14 @@ public class App {
             }
             queryBuilder.append(")");
 
-            PreparedStatement stmt = conn.prepareStatement(queryBuilder.toString());
-            for (int i = 0; i < valueArray.length; i++) {
-                stmt.setString(i + 1, valueArray[i]);
-            }
+            try (PreparedStatement stmt = conn.prepareStatement(queryBuilder.toString())) {
+                for (int i = 0; i < valueArray.length; i++) {
+                    stmt.setString(i + 1, valueArray[i]);
+                }
 
-            int rowsAffected = stmt.executeUpdate();
-            System.out.println(rowsAffected + " row(s) inserted.");
+                int rowsAffected = stmt.executeUpdate();
+                System.out.println(rowsAffected + " row(s) inserted.");
+            }
         } catch (Exception e) {
             System.out.println("Error inserting data: " + e.getMessage());
         }
@@ -180,11 +188,12 @@ public class App {
             String condition = reader.readLine();
 
             String query = "UPDATE " + tableName + " SET " + columnName + " = ? WHERE " + condition;
-            PreparedStatement stmt = conn.prepareStatement(query);
-            stmt.setString(1, newValue);
+            try (PreparedStatement stmt = conn.prepareStatement(query)) {
+                stmt.setString(1, newValue);
 
-            int rowsAffected = stmt.executeUpdate();
-            System.out.println(rowsAffected + " row(s) updated.");
+                int rowsAffected = stmt.executeUpdate();
+                System.out.println(rowsAffected + " row(s) updated.");
+            }
         } catch (Exception e) {
             System.out.println("Error updating data: " + e.getMessage());
         }
@@ -206,41 +215,42 @@ public class App {
             boolean isSelect = command.equals("select");
             boolean isInsert = command.equals("insert");
 
-            PreparedStatement stmt = conn.prepareStatement(query);
+            try (PreparedStatement stmt = conn.prepareStatement(query)) {
+                if (isSelect) {
+                    // Handle SELECT queries
+                    try (ResultSet resultSet = stmt.executeQuery()) {
+                        ResultSetMetaData metaData = resultSet.getMetaData();
+                        int columnCount = metaData.getColumnCount();
 
-            if (isSelect) {
-                // Handle SELECT queries
-                ResultSet resultSet = stmt.executeQuery();
-                ResultSetMetaData metaData = resultSet.getMetaData();
-                int columnCount = metaData.getColumnCount();
+                        // Print column names
+                        for (int i = 1; i <= columnCount; i++) {
+                            System.out.print(metaData.getColumnName(i));
+                            if (i < columnCount) {
+                                System.out.print("\t");
+                            }
+                        }
+                        System.out.println();
 
-                // Print column names
-                for (int i = 1; i <= columnCount; i++) {
-                    System.out.print(metaData.getColumnName(i));
-                    if (i < columnCount) {
-                        System.out.print("\t");
-                    }
-                }
-                System.out.println();
-
-                // Print column values
-                while (resultSet.next()) {
-                    for (int i = 1; i <= columnCount; i++) {
-                        System.out.print(resultSet.getString(i));
-                        if (i < columnCount) {
-                            System.out.print("\t");
+                        // Print column values
+                        while (resultSet.next()) {
+                            for (int i = 1; i <= columnCount; i++) {
+                                System.out.print(resultSet.getString(i));
+                                if (i < columnCount) {
+                                    System.out.print("\t");
+                                }
+                            }
+                            System.out.println();
                         }
                     }
-                    System.out.println();
+                } else if (isInsert) {
+                    // Handle INSERT queries
+                    int rowsAffected = stmt.executeUpdate();
+                    System.out.println(rowsAffected + " row(s) inserted.");
+                } else {
+                    // Handle other SQL queries (UPDATE, DELETE, etc.)
+                    int rowsAffected = stmt.executeUpdate();
+                    System.out.println(rowsAffected + " row(s) affected.");
                 }
-            } else if (isInsert) {
-                // Handle INSERT queries
-                int rowsAffected = stmt.executeUpdate();
-                System.out.println(rowsAffected + " row(s) inserted.");
-            } else {
-                // Handle other SQL queries (UPDATE, DELETE, etc.)
-                int rowsAffected = stmt.executeUpdate();
-                System.out.println(rowsAffected + " row(s) affected.");
             }
         } catch (Exception e) {
             System.out.println("Error executing complex query: " + e.getMessage());
