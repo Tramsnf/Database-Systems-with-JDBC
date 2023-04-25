@@ -12,9 +12,6 @@ public class AppTestCase {
 
     // Test Case 1
     public void testCase1() {
-        System.out.println();
-        System.out.println();
-        System.out.println();
         System.out.println("Test Case 1: Your test description");
 
         try {
@@ -23,15 +20,11 @@ public class AppTestCase {
             executeQueryAndPrintResults(query);
         } catch (Exception e) {
             System.out.println("Error executing complex query: " + e.getMessage());
-            //e.printStackTrace();
         }
     }
 
     // Test Case 2
     public void testCase2() {
-        System.out.println();
-        System.out.println();
-        System.out.println();
         System.out.println("Test Case 2: Your test description");
 
         try {
@@ -40,19 +33,19 @@ public class AppTestCase {
             executeQueryAndPrintResults(query);
         } catch (Exception e) {
             System.out.println("Error executing complex query: " + e.getMessage());
-            //e.printStackTrace();
         }
     }
 
     private void executeQueryAndPrintResults(String query) throws Exception {
-        PreparedStatement stmt = conn.prepareStatement(query);
-
-        if (isSelectQuery(query)) {
-            ResultSet resultSet = stmt.executeQuery();
-            printSelectResults(resultSet);
-        } else {
-            int rowsAffected = stmt.executeUpdate();
-            System.out.println(rowsAffected + " row(s) affected.");
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            if (isSelectQuery(query)) {
+                try (ResultSet resultSet = stmt.executeQuery()) {
+                    printSelectResults(resultSet);
+                }
+            } else {
+                int rowsAffected = stmt.executeUpdate();
+                System.out.println(rowsAffected + " row(s) affected.");
+            }
         }
     }
 
