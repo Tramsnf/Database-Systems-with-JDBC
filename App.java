@@ -17,8 +17,8 @@ public class App {
         Connection conn = null;
         try {
             Class.forName("oracle.jdbc.driver.OracleDriver");
-            conn = DriverManager.getConnection("jdbc:oracle:thin:@oracle2.wiu.edu:1521/orclpdb1", "username",
-                    "password");
+            conn = DriverManager.getConnection("jdbc:oracle:thin:@oracle2.wiu.edu:1521/orclpdb1", "ORA_S5545OI104",
+                    "");
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Connection Failed");
         }
@@ -85,7 +85,7 @@ public class App {
         try {
             conn.close();
         } catch (SQLException e) {
-            logger.log(Level.SEVERE, "Error closing the connection: " + e.getMessage());
+            System.out.println("Error closing the connection: " + e.getMessage());
         }
     }
 
@@ -140,9 +140,21 @@ public class App {
             String[] types = { "TABLE" };
             try (ResultSet resultSet = metaData.getTables(null, null, "%", types)) {
                 System.out.println("List of available tables:");
+                int columnCount = 5;
+                int currentColumn = 0;
                 while (resultSet.next()) {
                     String tableName = resultSet.getString("TABLE_NAME");
-                    System.out.println(tableName);
+                    System.out.printf("%-20s", tableName); //allocate 20 characters for each table name
+                    currentColumn++;
+
+                    if (currentColumn % columnCount == 0) {
+                        System.out.println(); // Start a new row when the current row is full
+                    }
+                }
+
+                // Add a newline at the end if the last row was not complete
+                if (currentColumn % columnCount != 0) {
+                    System.out.println();
                 }
             }
         } catch (SQLException e) {
@@ -152,7 +164,6 @@ public class App {
 
     private static void insertData() {
         try {
-            listTables();
             System.out.println("Enter table name:");
             String tableName = reader.readLine();
             System.out.println("Enter column names separated by commas (e.g. column1,column2):");
