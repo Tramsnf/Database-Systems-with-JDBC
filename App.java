@@ -13,8 +13,8 @@ public class App {
         Connection conn = null;
         try {
             Class.forName("oracle.jdbc.driver.OracleDriver");
-            conn = DriverManager.getConnection("jdbc:oracle:thin:@oracle2.wiu.edu:1521/orclpdb1", "username",
-                    "password");
+            conn = DriverManager.getConnection("jdbc:oracle:thin:@oracle2.wiu.edu:1521/orclpdb1", "ORA_SOI104",
+                    "CS470_8129");
         } catch (Exception e) {
             System.out.println("Connection Failed");
         }
@@ -37,6 +37,7 @@ public class App {
         int option = 0;
 
         while (option != 1 && option != 2) {
+            System.out.println();
             System.out.println("Choose an option:");
             System.out.println("1: Run the program");
             System.out.println("2: Run the test case");
