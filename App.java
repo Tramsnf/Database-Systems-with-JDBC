@@ -7,6 +7,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 public class App {
     private static Connection establishConnection() {
@@ -16,13 +20,26 @@ public class App {
             conn = DriverManager.getConnection("jdbc:oracle:thin:@oracle2.wiu.edu:1521/orclpdb1", "ORA_SOI104",
                     "CS470_8129");
         } catch (Exception e) {
-            System.out.println("Connection Failed");
+            logger.log(Level.SEVERE, "Connection Failed");
         }
         return conn;
     }
 
     static BufferedReader reader;
     static Connection conn = null;
+
+    private static final Logger logger = Logger.getLogger(App.class.getName());
+
+    static {
+        try {
+            FileHandler fileHandler = new FileHandler("App.log", true);
+            fileHandler.setFormatter(new SimpleFormatter());
+            logger.addHandler(fileHandler);
+            logger.setLevel(Level.ALL);
+        } catch (Exception e) {
+            System.err.println("Error setting up logger: " + e.getMessage());
+        }
+    }
 
     public static void main(String[] args) {
         reader = new BufferedReader(new InputStreamReader(System.in));
@@ -68,7 +85,7 @@ public class App {
         try {
             conn.close();
         } catch (SQLException e) {
-            System.out.println("Error closing the connection: " + e.getMessage());
+            logger.log(Level.SEVERE, "Error closing the connection: " + e.getMessage());
         }
     }
 
