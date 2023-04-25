@@ -18,7 +18,7 @@ public class AppTestCase {
 
         try {
             // Your test implementation
-            String query = "ALTER TABLE joy ADD (time TIMESTAMP, price DECIMAL(10, 2), ip VARCHAR(15))";
+            String query = "SELECT j.name, COUNT(j.name) AS name_count, j.time, j.price, COUNT(DISTINCT j.ip) AS ip_count, SUM(j.price) AS price_sum FROM joy j JOIN friends f ON j.name = f.name WHERE j.time >= TO_TIMESTAMP(:yesterday, 'YYYY-MM-DD HH24:MI:SS') AND j.time < TO_TIMESTAMP(:today, 'YYYY-MM-DD HH24:MI:SS') GROUP BY j.name, j.time, j.price";
             executeQueryAndPrintResults(query);
         } catch (Exception e) {
             System.out.println("Error executing complex query: " + e.getMessage());
@@ -34,7 +34,25 @@ public class AppTestCase {
 
         try {
             // Your test implementation
-            String query = "ALTER TABLE friends ADD (time TIMESTAMP)";
+            String query = "...";
+            executeQueryAndPrintResults(query);
+        } catch (Exception e) {
+            System.out.println();
+            System.out.println("Error executing complex query: " + e.getMessage());
+            e.printStackTrace();
+            System.out.println();
+        }
+    }
+
+    // Test Case 3
+    public void testCase3() {
+        System.out.println();
+        System.out.println("Test Case 3: Your test description");
+        System.out.println();
+
+        try {
+            // Your test implementation
+            String query = "...";
             executeQueryAndPrintResults(query);
         } catch (Exception e) {
             System.out.println();
@@ -90,5 +108,6 @@ public class AppTestCase {
     public void runAllTests() {
         testCase1();
         testCase2();
+        testCase3();
     }
 }

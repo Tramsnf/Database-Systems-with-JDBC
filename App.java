@@ -26,7 +26,7 @@ public class App {
                     Class.forName("oracle.jdbc.driver.OracleDriver");
                     url = "jdbc:oracle:thin:@oracle2.wiu.edu:1521/orclpdb1";
                     username = "";
-                    password = "C0_9";
+                    password = "";
                 } catch (ClassNotFoundException e) {
                     logger.log(Level.SEVERE, "Oracle driver not found");
                 }
@@ -35,8 +35,8 @@ public class App {
                 try {
                     Class.forName("com.mysql.cj.jdbc.Driver");
                     url = "jdbc:mysql://localhost:3306/your_database";
-                    username = "your_username";
-                    password = "your_password";
+                    username = "username";
+                    password = "password";
                 } catch (ClassNotFoundException e) {
                     logger.log(Level.SEVERE, "MySQL driver not found");
                 }
@@ -45,8 +45,8 @@ public class App {
                 try {
                     Class.forName("org.postgresql.Driver");
                     url = "jdbc:postgresql://localhost:5432/your_database";
-                    username = "your_username";
-                    password = "your_password";
+                    username = "username";
+                    password = "password";
                 } catch (ClassNotFoundException e) {
                     logger.log(Level.SEVERE, "PostgreSQL driver not found");
                 }
@@ -290,7 +290,7 @@ public class App {
             // Get the first word of the query (the SQL command)
             String command = query.split("\\s+")[0].toLowerCase();
 
-            // Check if the command is a SELECT or INSERT statement
+            // Check for the command statement
             boolean isSelect = command.equals("select");
             boolean isInsert = command.equals("insert");
             boolean isAlter = command.equals("alter");
@@ -342,3 +342,5 @@ public class App {
         }
     }
 }
+
+
