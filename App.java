@@ -17,8 +17,8 @@ public class App {
         Connection conn = null;
         try {
             Class.forName("oracle.jdbc.driver.OracleDriver");
-            conn = DriverManager.getConnection("jdbc:oracle:thin:@oracle2.wiu.edu:1521/orclpdb1", "ORA_SOI104",
-                    "CS470_8129");
+            conn = DriverManager.getConnection("jdbc:oracle:thin:@oracle2.wiu.edu:1521/orclpdb1", "username",
+                    "password");
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Connection Failed");
         }
