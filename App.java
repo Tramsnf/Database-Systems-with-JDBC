@@ -59,7 +59,7 @@ public class App {
         try {
             conn = DriverManager.getConnection(url, username, password);
         } catch (SQLException e) {
-            logger.log(Level.SEVERE, "Connection Failed");
+            logger.log(Level.SEVERE, "Connection Failed", e);
         }
 
         return conn;
@@ -233,7 +233,6 @@ public class App {
             queryBuilder.append("INSERT INTO ").append(tableName).append(" (");
             queryBuilder.append(columns);
             queryBuilder.append(") VALUES (");
-
             for (int i = 0; i < valueArray.length; i++) {
                 queryBuilder.append("?");
                 if (i < valueArray.length - 1) {
@@ -342,5 +341,3 @@ public class App {
         }
     }
 }
-
-
