@@ -19,7 +19,7 @@ public class AppTestCase {
 
         try {
             // Your test implementation
-            String query = "CREATE TABLE friends ( id INT PRIMARY KEY, name VARCHAR(255), relationship VARCHAR(255), meeting_date DATE ); INSERT INTO friends (id, name, relationship, meeting_date) VALUES (1, 'Alice', 'colleague', '2021-05-10'), (2, 'Bob', 'neighbor', '2018-08-20'), (3, 'Charlie', 'classmate', '2017-09-15'), (4, 'Diana', 'friend', '2019-11-05'), (5, 'Eva', 'cousin', '2021-03-12')";
+            String query = "select * from hospitals";
             executeQueryAndPrintResults(query);
         } catch (Exception e) {
             System.out.println("Error executing complex query: " + e.getMessage());
@@ -36,7 +36,7 @@ public class AppTestCase {
 
         try {
             // Your test implementation
-            String query = "INSERT INTO joy (id, age, name) VALUES (6, 32, 'Felix'), (7, 25, 'Grace'), (8, 45, 'Hannah'), (9, 37, 'Ivan'), (10, 29, 'Jack')";
+            String query = "select * from doctors";
             executeQueryAndPrintResults(query);
         } catch (Exception e) {
             System.out.println("Error executing complex query: " + e.getMessage());

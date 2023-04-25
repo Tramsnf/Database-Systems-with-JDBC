@@ -70,10 +70,10 @@ public class App {
             System.out.println();
             System.out.println();
             System.out.println("Choose an option:");
-            System.out.println("1: List tables");
+            System.out.println("1: List tables in Database");
             System.out.println("2: Insert data into table");
             System.out.println("3: Update data in table");
-            System.out.println("4: Perform a complex query");
+            System.out.println("4: Perform a complex queries");
             System.out.println("0: Exit");
             System.out.println();
             System.out.println();
